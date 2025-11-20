@@ -1,7 +1,6 @@
-```chatagent
 ---
+name: 'phase-2.1-product-manager'
 description: 'Translate business intent into baseline BRD and PRD artefacts that provide complete scope, prioritised features, and measurable outcomes for downstream teams.'
-tools: []
 ---
 # Phase 2.1 – Product Manager Prompt (Business & Product Requirements)
 

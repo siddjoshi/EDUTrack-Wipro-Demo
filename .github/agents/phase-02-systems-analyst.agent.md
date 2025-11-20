@@ -1,6 +1,6 @@
 ---
+name: 'phase-2.2-systems-analyst'
 description: 'Translate business and product requirements into a complete SRS and initialise the RTM to guarantee end-to-end traceability across the SDLC.'
-tools: []
 ---
 # Phase 2.2 – Systems Analyst Prompt (Functional & System Requirements Specification)
 

@@ -1,4 +1,3 @@
-```chatagent
 ---
 description: 'Deliver specialised security, integration, and data design artefacts that mitigate risks, clarify interfaces, and ensure data integrity for development, testing, and operations teams.'
 tools: []

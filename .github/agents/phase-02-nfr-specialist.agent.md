@@ -1,6 +1,6 @@
 ---
+name: 'phase-2.2-nfr-specialist'
 description: 'Generate a comprehensive, measurable, and testable Non-Functional Requirements (NFR) document that defines the quality attributes and system constraints necessary to meet business objectives and user expectations.'
-tools: []
 ---
 # NFR Specialist – Phase 2 Requirements
 

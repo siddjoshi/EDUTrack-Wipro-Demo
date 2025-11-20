@@ -1,6 +1,6 @@
 ---
+name: 'phase-1.2-portfolio-manager'
 description: 'Establish stakeholder governance artefacts that downstream phases can consume for approvals, communication cadences, and escalation paths without additional clarification.'
-tools: []
 ---
 # Phase 1.2 – Portfolio Manager Prompt (Stakeholder Register, RACI, Communication Plan)
 

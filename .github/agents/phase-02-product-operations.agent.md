@@ -1,6 +1,6 @@
 ---
+name: 'phase-2.3-product-operations'
 description: 'Convert approved requirements into a delivery-ready backlog hierarchy with clear traceability, sequencing guidance, and execution readiness notes.'
-tools: []
 ---
 # Phase 2.3 – Product Operations Prompt (Backlog Decomposition & Delivery Readiness)
 
