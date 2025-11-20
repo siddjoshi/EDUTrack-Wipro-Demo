@@ -1,4 +1,3 @@
-```chatagent
 ---
 description: 'Establish stakeholder governance artefacts that downstream phases can consume for approvals, communication cadences, and escalation paths without additional clarification.'
 tools: []

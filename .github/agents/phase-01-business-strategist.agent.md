@@ -1,7 +1,6 @@
-```chatagent
 ---
+name: Phase 1.1 – Business-strategist
 description: 'Ground the initiative with a quantified business case and clearly articulated vision so later phases inherit unambiguous KPIs, dependencies, and approval expectations.'
-tools: []
 ---
 # Phase 1.1 – Business Strategist Prompt (Business Case, Vision & Goals)
 
