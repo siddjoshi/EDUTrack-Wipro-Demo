@@ -1,4 +1,3 @@
-```chatagent
 ---
 description: 'Convert approved requirements into a delivery-ready backlog hierarchy with clear traceability, sequencing guidance, and execution readiness notes.'
 tools: []
