@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Script to create GitHub issues using GitHub REST API.
-This version uses the git credential helper to obtain authentication.
+This version uses git credential helper or environment token for authentication.
 """
 
 import os
@@ -9,10 +9,13 @@ import re
 import json
 import subprocess
 import sys
+import urllib.request
+import urllib.error
 from typing import Dict, List, Optional
 
 # Add the scripts directory to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scripts'))
+script_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, script_dir)
 from create_github_issues import BacklogItem, collect_backlog_items, DEFAULT_REPO
 
 def get_github_token() -> Optional[str]:
@@ -24,10 +27,17 @@ def get_github_token() -> Optional[str]:
     
     # Try to get from git credential helper
     try:
-        # Get the remote URL
+        # Get the git repository root
+        result = subprocess.run(
+            ['git', 'rev-parse', '--show-toplevel'],
+            capture_output=True, text=True, check=True
+        )
+        repo_root = result.stdout.strip()
+        
+        # Get the remote URL from the repo
         result = subprocess.run(
             ['git', 'config', '--get', 'remote.origin.url'],
-            capture_output=True, text=True, check=True, cwd='/home/runner/work/EDUTrack-Demo/EDUTrack-Demo'
+            capture_output=True, text=True, check=True, cwd=repo_root
         )
         remote_url = result.stdout.strip()
         
@@ -38,13 +48,15 @@ def get_github_token() -> Optional[str]:
             result = subprocess.run(
                 ['git', 'credential', 'fill'],
                 input=credential_input,
-                capture_output=True, text=True, cwd='/home/runner/work/EDUTrack-Demo/EDUTrack-Demo'
+                capture_output=True, text=True, cwd=repo_root
             )
             
             # Parse credential output
             for line in result.stdout.split('\n'):
                 if line.startswith('password='):
-                    return line.split('=', 1)[1].strip()
+                    password = line.split('=', 1)[1].strip()
+                    if password:  # Only return if not empty
+                        return password
     except Exception as e:
         print(f"Could not get token from git credential helper: {e}")
     
@@ -53,9 +65,6 @@ def get_github_token() -> Optional[str]:
 
 def create_issue_via_api(repo: str, title: str, body: str, labels: List[str], token: str) -> Optional[int]:
     """Create a GitHub issue using the REST API"""
-    import urllib.request
-    import urllib.error
-    
     url = f"https://api.github.com/repos/{repo}/issues"
     
     data = {
@@ -106,12 +115,14 @@ def main():
     
     if not token:
         print("❌ Error: No GitHub authentication available")
-        print("\nThis script needs GitHub authentication to create issues.")
-        print("Since we're running in a GitHub Actions environment,")
-        print("the authentication should be available automatically.")
-        print("\nPlease check that:")
-        print("  1. The workflow has 'write' permissions for issues")
-        print("  2. GITHUB_TOKEN is available in the environment")
+        print("\nThis script needs a GitHub token to create issues.")
+        print("\nPlease provide authentication via:")
+        print("  1. Environment variable: export GITHUB_TOKEN=your_token")
+        print("  2. Git credential helper (automatically used if configured)")
+        print("\nTo create a token:")
+        print("  - Go to: https://github.com/settings/tokens")
+        print("  - Create a new token with 'repo' or 'public_repo' scope")
+        print("  - Set it: export GITHUB_TOKEN=ghp_your_token_here")
         return 1
     
     print("✅ GitHub authentication found")
@@ -122,7 +133,15 @@ def main():
     
     # Collect backlog items
     print("\n🔍 Collecting backlog items...")
-    backlog_dir = '/home/runner/work/EDUTrack-Demo/EDUTrack-Demo/backlog'
+    # Get backlog directory relative to script location
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.dirname(script_dir)
+    backlog_dir = os.path.join(repo_root, 'backlog')
+    
+    if not os.path.exists(backlog_dir):
+        print(f"❌ Error: Backlog directory not found: {backlog_dir}")
+        return 1
+    
     items = collect_backlog_items(backlog_dir)
     
     total = sum(len(items[cat]) for cat in items)
