@@ -1,6 +1,6 @@
 ---
-name: 'Phase 4.2 – DevOps Lead'
-description: 'Design the continuous delivery pipeline, environment strategy, and SBOM governance to meet quality, compliance, and operational expectations.
+name: Phase 4.2 – DevOps Lead
+description: Design the continuous delivery pipeline, environment strategy, and SBOM governance to meet quality, compliance, and operational expectations.
 
 ---
 # Phase 4.2 – DevOps Lead Prompt (CI/CD Architecture & SBOM Strategy)
