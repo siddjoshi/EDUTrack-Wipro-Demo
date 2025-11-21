@@ -17,6 +17,13 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, script_dir)
 from create_github_issues import BacklogItem, collect_backlog_items, DEFAULT_REPO
 
+# Git credential helper protocol format
+# See: https://git-scm.com/docs/git-credential
+GIT_CREDENTIAL_INPUT = "protocol=https\nhost=github.com\n\n"
+
+# Valid GitHub hosts for URL validation
+GITHUB_HOSTS = ['github.com/', 'github.com:', '@github.com']
+
 def get_github_token() -> Optional[str]:
     """Get GitHub token from git credential helper or environment"""
     # Try environment variable first
@@ -40,24 +47,25 @@ def get_github_token() -> Optional[str]:
         )
         remote_url = result.stdout.strip()
         
-        # Validate this is a GitHub URL
-        if 'github.com' not in remote_url:
+        # Validate this is a genuine GitHub URL (not subdomain attack)
+        if not any(host in remote_url for host in GITHUB_HOSTS):
             return None
         
-        # Try git credential fill
-        credential_input = f"protocol=https\nhost=github.com\n\n"
+        # Try git credential fill using the credential helper protocol
         result = subprocess.run(
             ['git', 'credential', 'fill'],
-            input=credential_input,
+            input=GIT_CREDENTIAL_INPUT,
             capture_output=True, text=True, cwd=repo_root
         )
         
-        # Parse credential output
+        # Parse credential output for password field
         for line in result.stdout.split('\n'):
             if line.startswith('password='):
-                password = line.split('=', 1)[1].strip()
-                if password:  # Only return if not empty
-                    return password
+                parts = line.split('=', 1)
+                if len(parts) > 1:
+                    password = parts[1].strip()
+                    if password:  # Only return if not empty
+                        return password
                     
     except subprocess.CalledProcessError as e:
         # Git command failed - likely not in a git repository
